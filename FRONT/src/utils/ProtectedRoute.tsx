@@ -1,14 +1,14 @@
 import { useAuth } from '@/contexts/AuthContext'
-import { Navigate } from 'react-router-dom'
 import type { UserType } from '@/types/auth'
 import type { ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 
 interface ProtectedRouteProps {
     children: ReactNode
     allowedTypes?: UserType[]
 }
 
-export const ProtectedRoute = ({ children, allowedTypes }: ProtectedRouteProps) => {
+export function ProtectedRoute({ children, allowedTypes }: ProtectedRouteProps) {
     const { isAuthenticated, user } = useAuth()
 
     // Se não estiver autenticado, redireciona para login

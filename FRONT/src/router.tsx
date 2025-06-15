@@ -1,10 +1,10 @@
-import { createBrowserRouter } from 'react-router-dom'
-import { LoginPage } from '@/pages/LoginPage'
-import { RegisterPage } from '@/pages/RegisterPage'
-import { PacientePage } from '@/pages/PacientePage'
-import { MedicoPage } from '@/pages/MedicoPage'
 import { AdminPage } from '@/pages/AdminPage'
-import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { LoginPage } from '@/pages/LoginPage'
+import { MedicoPage } from '@/pages/MedicoPage'
+import { PacientePage } from '@/pages/PacientePage'
+import { RegisterPage } from '@/pages/RegisterPage'
+import { ProtectedRoute } from '@/utils/ProtectedRoute'
+import { createBrowserRouter } from 'react-router-dom'
 
 export const router = createBrowserRouter([
   {
@@ -43,13 +43,4 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     )
   },
-  // Rota antiga para compatibilidade - redireciona baseado no tipo de usuário
-  {
-    path: '/dashboard',
-    element: (
-      <ProtectedRoute>
-        <div>Redirecionando...</div>
-      </ProtectedRoute>
-    )
-  }
 ])
