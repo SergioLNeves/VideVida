@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/sonner'
+import { AuthProvider } from '@/contexts/AuthContext'
 import './index.css'
 import { router } from './router'
 
@@ -24,8 +25,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* QueryClientProvider fornece o contexto do React Query para toda a aplicação */}
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

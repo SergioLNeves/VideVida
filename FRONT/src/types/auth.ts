@@ -1,60 +1,26 @@
-import { z } from 'zod'
+export type UserType = 'paciente' | 'medico' | 'admin'
 
-// User types matching API
-export type UserType = 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist'
-
-// User profile interface
-export interface UserProfile {
-  first_name: string
-  last_name: string
-  phone: string
-  date_of_birth?: string
-  cpf?: string
-  crm?: string
-  coren?: string
-  speciality?: string
+export interface User {
+    id: string
+    email: string
+    password: string
+    name: string
+    type: UserType
 }
 
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email é obrigatório')
-    .email('Email deve ter um formato válido'),
-  password: z
-    .string()
-    .min(1, 'Senha é obrigatória')
-    .min(8, 'Senha deve ter pelo menos 8 caracteres')
-    .max(128, 'Senha deve ter no máximo 128 caracteres')
-})
+export interface AuthState {
+    user: User | null
+    isAuthenticated: boolean
+}
 
-export const registerSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email é obrigatório')
-    .email('Email deve ter um formato válido'),
-  password: z
-    .string()
-    .min(1, 'Senha é obrigatória')
-    .min(8, 'Senha deve ter pelo menos 8 caracteres')
-    .max(128, 'Senha deve ter no máximo 128 caracteres'),
-  confirmPassword: z
-    .string()
-    .min(1, 'Confirmação de senha é obrigatória'),
-  type: z.enum(['patient', 'doctor', 'nurse', 'admin', 'receptionist']),
-  profile: z.object({
-    first_name: z.string().min(1, 'Nome é obrigatório'),
-    last_name: z.string().min(1, 'Sobrenome é obrigatório'),
-    phone: z.string().min(1, 'Telefone é obrigatório'),
-    date_of_birth: z.string().optional(),
-    cpf: z.string().optional(),
-    crm: z.string().optional(),
-    coren: z.string().optional(),
-    speciality: z.string().optional()
-  })
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'As senhas não coincidem',
-  path: ['confirmPassword']
-})
+export interface LoginCredentials {
+    email: string
+    password?: string
+}
 
-export type LoginFormData = z.infer<typeof loginSchema>
-export type RegisterFormData = z.infer<typeof registerSchema>
+export interface RegisterData {
+    email: string
+    password: string
+    name: string
+    type: UserType
+}
