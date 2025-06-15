@@ -1,6 +1,7 @@
 import { AdminPage } from '@/pages/AdminPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { MedicoPage } from '@/pages/MedicoPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 import { PacientePage } from '@/pages/PacientePage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ProtectedRoute } from '@/utils/ProtectedRoute'
@@ -43,4 +44,8 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     )
   },
+  {
+    path: '*',
+    element: <NotFoundPage />
+  }
 ])
