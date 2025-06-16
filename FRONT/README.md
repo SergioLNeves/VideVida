@@ -139,6 +139,20 @@ pnpm preview
 pnpm lint
 ```
 
+## 🧪 Credenciais de Teste
+
+Para facilitar o desenvolvimento e testes, utilize as seguintes credenciais:
+
+### 📧 Emails de Teste
+- **paciente@email.com** - Acesso ao portal do paciente
+- **medico@email.com** - Acesso ao portal médico  
+- **admin@email.com** - Acesso ao painel administrativo
+
+### 🔑 Senha Padrão
+- **Senha:** `123456` (para todos os usuários de teste)
+
+> **Nota:** Essas credenciais são apenas para desenvolvimento e testes. Em produção, utilize credenciais seguras e únicas.
+
 ## 🎨 Padrões de Design
 
 - **Design System** baseado em Shadcn UI

@@ -151,17 +151,6 @@ export const LoginPage = () => {
                             </div>
                         </form>
                     )}
-
-                    {/* Seção de ajuda com emails de teste */}
-                    <div className="pt-4 border-t">
-                        <p className="text-sm text-muted-foreground mb-2">Emails de teste:</p>
-                        <div className="text-xs text-muted-foreground space-y-1">
-                            <p>• paciente@email.com (Paciente)</p>
-                            <p>• medico@email.com (Médico)</p>
-                            <p>• admin@email.com (Admin)</p>
-                            <p className="pt-1">Senha: 123456</p>
-                        </div>
-                    </div>
                 </CardContent>
             </Card>
         </div>

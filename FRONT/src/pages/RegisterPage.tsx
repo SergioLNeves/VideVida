@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
 
 export const RegisterPage = () => {
@@ -44,29 +43,26 @@ export const RegisterPage = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Validações
-        if (!formData.email.trim()) {
-            toast.error('Email é obrigatório')
-            return
+        const getValidationError = (): string | null => {
+            switch (true) {
+                case !formData.email.trim():
+                    return 'Email é obrigatório'
+                case !formData.name.trim():
+                    return 'Nome é obrigatório'
+                case !formData.password.trim():
+                    return 'Senha é obrigatória'
+                case formData.password.length < 6:
+                    return 'Senha deve ter pelo menos 6 caracteres'
+                case formData.password !== formData.confirmPassword:
+                    return 'Senhas não coincidem'
+                default:
+                    return null
+            }
         }
 
-        if (!formData.name.trim()) {
-            toast.error('Nome é obrigatório')
-            return
-        }
-
-        if (!formData.password.trim()) {
-            toast.error('Senha é obrigatória')
-            return
-        }
-
-        if (formData.password.length < 6) {
-            toast.error('Senha deve ter pelo menos 6 caracteres')
-            return
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            toast.error('Senhas não coincidem')
+        const validationError = getValidationError()
+        if (validationError) {
+            toast.error(validationError)
             return
         }
 
@@ -89,9 +85,9 @@ export const RegisterPage = () => {
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Criar conta no VideVida</CardTitle>
+                    <CardTitle>Criar conta de Paciente</CardTitle>
                     <CardDescription>
-                        Preencha os dados para criar sua conta
+                        Preencha os dados para criar sua conta de paciente no VideVida
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -117,24 +113,6 @@ export const RegisterPage = () => {
                                 placeholder="Seu nome completo"
                                 disabled={registerMutation.isPending}
                             />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="type">Tipo de usuário</Label>
-                            <Select
-                                value={formData.type}
-                                onValueChange={(value: UserType) => handleInputChange('type', value)}
-                                disabled={registerMutation.isPending}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Selecione o tipo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="paciente">Paciente</SelectItem>
-                                    <SelectItem value="medico">Médico</SelectItem>
-                                    <SelectItem value="admin">Administrador</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
 
                         <div className="space-y-2">
