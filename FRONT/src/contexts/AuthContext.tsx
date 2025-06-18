@@ -1,10 +1,11 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User, AuthState } from '@/types/auth'
 
 interface AuthContextType extends AuthState {
     login: (user: User) => void
     logout: () => void
+    refreshUserData: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -21,24 +22,71 @@ interface AuthProviderProps {
     children: ReactNode
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [authState, setAuthState] = useState<AuthState>({
+// Chave para persistir o estado de autenticação na sessão
+const AUTH_SESSION_KEY = 'videvida_auth_state'
+
+// Função para salvar estado de auth no sessionStorage
+const saveAuthState = (state: AuthState): void => {
+    try {
+        sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(state))
+    } catch (error) {
+        console.error('Erro ao salvar estado de autenticação:', error)
+    }
+}
+
+// Função para recuperar estado de auth do sessionStorage
+const loadAuthState = (): AuthState => {
+    try {
+        const stored = sessionStorage.getItem(AUTH_SESSION_KEY)
+        if (stored) {
+            return JSON.parse(stored)
+        }
+    } catch (error) {
+        console.error('Erro ao carregar estado de autenticação:', error)
+    }
+
+    return {
         user: null,
         isAuthenticated: false
-    })
+    }
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+    const [authState, setAuthState] = useState<AuthState>(() => loadAuthState())
+
+    // Salva o estado sempre que ele mudar
+    useEffect(() => {
+        saveAuthState(authState)
+    }, [authState])
 
     const login = (user: User) => {
-        setAuthState({
+        const newState = {
             user,
             isAuthenticated: true
-        })
+        }
+        setAuthState(newState)
     }
 
     const logout = () => {
-        setAuthState({
+        const newState = {
             user: null,
             isAuthenticated: false
-        })
+        }
+        setAuthState(newState)
+
+        // Remove o estado de auth da sessão
+        try {
+            sessionStorage.removeItem(AUTH_SESSION_KEY)
+        } catch (error) {
+            console.error('Erro ao remover estado de autenticação:', error)
+        }
+    }
+
+    const refreshUserData = () => {
+        // Força um refresh dos dados do usuário se necessário
+        if (authState.isAuthenticated && authState.user) {
+            setAuthState(prevState => ({ ...prevState }))
+        }
     }
 
     return (
@@ -46,7 +94,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             value={{
                 ...authState,
                 login,
-                logout
+                logout,
+                refreshUserData
             }}
         >
             {children}

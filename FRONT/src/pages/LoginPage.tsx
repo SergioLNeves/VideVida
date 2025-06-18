@@ -26,7 +26,7 @@ export const LoginPage = () => {
                 toast.success('Email encontrado! Digite sua senha.')
             } else {
                 toast.info('Email não encontrado. Redirecionando para cadastro...')
-                setTimeout(() => navigate('/register', { state: { email } }), 1500)
+                navigate('/register', { state: { email } })
             }
         },
         onError: () => {

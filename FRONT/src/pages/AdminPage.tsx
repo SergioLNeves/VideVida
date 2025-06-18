@@ -2,6 +2,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Settings, Users, BarChart3, Shield, Database, Activity } from 'lucide-react'
+import { UserRegistrationPanel } from '@/components/UserRegistrationPanel'
 
 export const AdminPage = () => {
     const { user, logout } = useAuth()
@@ -163,6 +164,11 @@ export const AdminPage = () => {
                             </div>
                         </CardContent>
                     </Card>
+                </div>
+
+                {/* Painel de Usuários Registrados na Sessão */}
+                <div className="mt-8">
+                    <UserRegistrationPanel />
                 </div>
             </div>
         </div>
