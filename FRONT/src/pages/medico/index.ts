@@ -1,0 +1,2 @@
+export { MedicoPage } from './MedicoPage';
+

@@ -103,7 +103,15 @@ src/
 └── assets/              # Recursos estáticos
 ```
 
-## 👥 Tipos de Usuário
+## � Documentação
+
+Para informações detalhadas sobre a arquitetura e implementação do sistema, consulte nossa [documentação técnica completa](./docs/README.md):
+
+- **[Estrutura de Páginas](./docs/README_ESTRUTURA.md)**: Organização modular das páginas por domínio
+- **[Sistema de Roteamento](./docs/README_ROUTER.md)**: Configuração declarativa e rotas protegidas
+- **[Sistema de Tabelas](./docs/README_TABELA.md)**: Componentes reutilizáveis para exibição de dados
+
+## �👥 Tipos de Usuário
 
 ### 🏥 Administrador (`admin`)
 - Acesso completo ao sistema
