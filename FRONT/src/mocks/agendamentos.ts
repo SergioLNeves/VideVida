@@ -4,7 +4,7 @@
 const mockAgendamentos = [
   {
     id: 'agendamento_1',
-    pacienteId: 'current_user',
+    pacienteId: 'current_user', // Para compatibilidade com usuário logado atual
     medicoId: '1',
     tratamentoId: 'consulta-cardiologica',
     data: '2025-06-25',
@@ -17,7 +17,7 @@ const mockAgendamentos = [
   },
   {
     id: 'agendamento_2',
-    pacienteId: 'current_user',
+    pacienteId: 'current_user', // Para compatibilidade com usuário logado atual
     medicoId: '2',
     tratamentoId: 'consulta-dermatologica',
     data: '2025-06-28',
@@ -30,7 +30,7 @@ const mockAgendamentos = [
   },
   {
     id: 'agendamento_3',
-    pacienteId: 'current_user',
+    pacienteId: 'current_user', // Para compatibilidade com usuário logado atual
     medicoId: '3',
     tratamentoId: 'consulta-ortopedica',
     data: '2025-06-20',
@@ -43,7 +43,7 @@ const mockAgendamentos = [
   },
   {
     id: 'agendamento_4',
-    pacienteId: 'current_user',
+    pacienteId: 'current_user', // Para compatibilidade com usuário logado atual
     medicoId: '1',
     tratamentoId: 'eletrocardiograma',
     data: '2025-07-02',
@@ -53,6 +53,20 @@ const mockAgendamentos = [
     observacoes: 'Exame preventivo',
     createdAt: '2025-06-18T12:00:00.000Z',
     updatedAt: '2025-06-18T12:00:00.000Z'
+  },
+  // Agendamentos de outros pacientes (para futura funcionalidade do médico)
+  {
+    id: 'agendamento_5',
+    pacienteId: 'paciente@exemplo.com',
+    medicoId: '1',
+    tratamentoId: 'consulta-cardiologica',
+    data: '2025-06-26',
+    horaInicio: '10:00',
+    horaFim: '11:00',
+    status: 'agendado',
+    observacoes: 'Consulta de acompanhamento',
+    createdAt: '2025-06-18T13:00:00.000Z',
+    updatedAt: '2025-06-18T13:00:00.000Z'
   }
 ]
 

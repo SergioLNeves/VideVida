@@ -2,7 +2,6 @@ import {
   AdminPage,
   AgendamentoPage,
   AgendamentosListPage,
-  HomePage,
   LoginPage,
   MedicoPage,
   NotFoundPage,
@@ -18,24 +17,18 @@ import { createBrowserRouter } from 'react-router-dom'
 
 // ==================== CONFIGURAÇÃO DE ROTAS ====================
 
-// Constantes para os caminhos das rotas
 export const ROUTES = {
-  // Rotas públicas
-  HOME: '/',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  
   // Rotas por tipo de usuário
   PACIENTE: '/paciente',
   MEDICO: '/medico',
   ADMIN: '/admin',
   
-  // Rotas de perfil
+  // Rota de complemento cadastral do paciente
   PROFILE_COMPLETE: '/profile/complete',
-  
-  // Rotas de agendamento (paciente)
-  AGENDAMENTO: '/agendamento',
-  AGENDAMENTOS: '/agendamentos',
+
+  // Rota de agendamento de agendamento
+  AGENDAMENTO_PACIENTE: '/agendamento',
+  GET_AGENDAMENTOS: '/agendamentos', 
   
   // Rota 404
   NOT_FOUND: '*'
@@ -47,7 +40,6 @@ const PACIENTE_ONLY: UserType[] = ['paciente']
 const MEDICO_ONLY: UserType[] = ['medico']
 const ADMIN_ONLY: UserType[] = ['admin']
 
-// Tipos para as rotas
 interface ProtectedRouteConfig {
   path: string
   element: React.ReactNode
@@ -55,7 +47,6 @@ interface ProtectedRouteConfig {
   requiresProfileComplete?: boolean
 }
 
-// Componente auxiliar para rotas protegidas com perfil
 function ProtectedProfileRoute({ 
   children, 
   allowedTypes 
@@ -72,9 +63,7 @@ function ProtectedProfileRoute({
   )
 }
 
-// Configuração das rotas protegidas
 const protectedRoutes: ProtectedRouteConfig[] = [
-  // Rotas específicas por tipo de usuário
   {
     path: ROUTES.PACIENTE,
     element: <PacientePage />,
@@ -90,8 +79,6 @@ const protectedRoutes: ProtectedRouteConfig[] = [
     element: <AdminPage />,
     allowedTypes: ADMIN_ONLY
   },
-  
-  // Rotas que requerem apenas autenticação
   {
     path: ROUTES.PROFILE_COMPLETE,
     element: <ProfileCompletionPage />,
@@ -99,16 +86,18 @@ const protectedRoutes: ProtectedRouteConfig[] = [
   },
   
   // Rotas que requerem perfil completo (apenas paciente)
+  // Perfis como Admin e Médico Já têm o perfil completo por padrão
+  // e não precisam dessa verificação, pois são gerenciados pelo Admin
   {
-    path: ROUTES.AGENDAMENTO,
+    path: ROUTES.AGENDAMENTO_PACIENTE,
     element: <AgendamentoPage />,
-    allowedTypes: PACIENTE_ONLY,
+    allowedTypes: ALL_USER_TYPES,
     requiresProfileComplete: true
   },
   {
-    path: ROUTES.AGENDAMENTOS,
+    path: ROUTES.GET_AGENDAMENTOS,
     element: <AgendamentosListPage />,
-    allowedTypes: PACIENTE_ONLY,
+    allowedTypes: ALL_USER_TYPES,
     requiresProfileComplete: true
   }
 ]
@@ -128,28 +117,22 @@ function createProtectedRoutes(): RouteObject[] {
 export const router = createBrowserRouter([
   // ========== ROTAS PÚBLICAS ==========
   {
-    path: ROUTES.HOME,
-    element: <HomePage />
+    path: "/",
+    element: <LoginPage />
   },
-  {
-    path: '/home', // Alias para compatibilidade
-    element: <HomePage />
-  },
-  {
-    path: ROUTES.LOGIN,
+    {
+    path: "/login",
     element: <LoginPage />
   },
   {
-    path: ROUTES.REGISTER,
+    path: "/register",
     element: <RegisterPage />
   },
   
   // ========== ROTAS PROTEGIDAS ==========
-  // Geradas dinamicamente a partir da configuração
   ...createProtectedRoutes(),
   
   // ========== ROTA 404 ==========
-  // Deve ser sempre a última rota
   {
     path: ROUTES.NOT_FOUND,
     element: <NotFoundPage />

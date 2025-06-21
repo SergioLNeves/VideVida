@@ -1,14 +1,6 @@
-// Páginas de Autenticação
-export * from './auth'
-
-// Páginas do Paciente
-export * from './paciente'
-
-// Páginas do Médico
-export * from './medico'
-
-// Páginas do Admin
 export * from './admin'
-
-// Páginas Compartilhadas
+export * from './auth'
+export * from './medico'
+export * from './paciente'
 export * from './shared'
+

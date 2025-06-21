@@ -5,16 +5,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useAuth } from '@/contexts/AuthContext'
 import { useAgendamento } from '@/hooks/useAgendamento'
 import { useUserProfile } from '@/hooks/useUserProfile'
-import { AlertCircle, Calendar, CheckCircle, Clock, FileText, Stethoscope, User } from 'lucide-react'
+import { Calendar, Clock, FileText, Stethoscope, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export const PacientePage = () => {
     const { user, logout } = useAuth()
     const navigate = useNavigate()
-    const { profile, isProfileComplete, getProfileValidation } = useUserProfile()
+    const { isProfileComplete, getProfileValidation } = useUserProfile()
     const { agendamentos, medicos, tratamentos } = useAgendamento()
     
-    const validation = getProfileValidation()
 
     // Filtrar agendamentos do usuário atual
     const userAgendamentos = agendamentos.filter(agendamento => 
@@ -58,7 +57,7 @@ export const PacientePage = () => {
         if (isProfileComplete) {
             navigate('/agendamento')
         } else {
-            navigate('/profile/complete')
+            navigate('/profile/complete?from=agendamento')
         }
     }
 
@@ -66,51 +65,24 @@ export const PacientePage = () => {
         <div className="min-h-screen bg-background p-4">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-6">
+                <header className="flex justify-between items-center mb-6">
                     <div>
                         <h1 className="text-3xl font-bold">Portal do Paciente</h1>
                         <p className="text-muted-foreground">Bem-vindo, {user?.name}</p>
                     </div>
+                    <section className='gap-2 flex flex-col md:flex-row'>
+                    <Button  onClick={() => navigate('/profile/complete?from=home')}  className='text-primary-foreground'>
+                        <User className="h-5 w-5" /> Perfil
+                    </Button>
                     <Button onClick={logout} variant="outline">
                         Sair
                     </Button>
-                </div>
-
-                {/* Status do Perfil */}
-                {profile && (
-                    <Card className="mb-6">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    {isProfileComplete ? (
-                                        <CheckCircle className="h-6 w-6 text-green-600" />
-                                    ) : (
-                                        <AlertCircle className="h-6 w-6 text-yellow-600" />
-                                    )}
-                                    <div>
-                                        <h3 className="font-semibold">
-                                            {isProfileComplete ? 'Perfil Completo' : 'Perfil Incompleto'}
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            {validation && `${validation.completionPercentage}% completo`}
-                                        </p>
-                                    </div>
-                                </div>
-                                {!isProfileComplete && (
-                                    <Button 
-                                        onClick={() => navigate('/profile/complete')}
-                                        size="sm"
-                                    >
-                                        Completar Perfil
-                                    </Button>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
+                    </section>
+                </header>
 
                 {/* Cards de funcionalidades */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                   {/* Consulta */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -140,6 +112,7 @@ export const PacientePage = () => {
                         </CardContent>
                     </Card>
 
+                   {/* Histórico Médico */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -152,27 +125,6 @@ export const PacientePage = () => {
                         </CardHeader>
                         <CardContent>
                             <Button className="w-full" variant="outline">Ver Histórico</Button>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <User className="h-5 w-5" />
-                                Perfil
-                            </CardTitle>
-                            <CardDescription>
-                                Atualize suas informações pessoais
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button 
-                                className="w-full" 
-                                variant="outline"
-                                onClick={() => navigate('/profile/complete')}
-                            >
-                                {isProfileComplete ? 'Editar Perfil' : 'Completar Perfil'}
-                            </Button>
                         </CardContent>
                     </Card>
                 </div>

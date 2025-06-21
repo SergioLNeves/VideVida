@@ -11,6 +11,7 @@ export interface UserProfile {
   isProfileComplete: boolean
   createdAt: string
   updatedAt: string
+  convenio?: string
 }
 
 export interface Address {

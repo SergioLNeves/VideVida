@@ -1,8 +1,8 @@
-import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Settings, Users, BarChart3, Shield, Database, Activity } from 'lucide-react'
-import { UserRegistrationPanel } from '@/components/UserRegistrationPanel'
+import { useAuth } from '@/contexts/AuthContext'
+import { UserRegistrationPanel } from '@/pages/admin/components/UserRegistrationPanel'
+import { Activity, BarChart3, Database, Settings, Shield, Users } from 'lucide-react'
 
 export const AdminPage = () => {
     const { user, logout } = useAuth()

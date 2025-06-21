@@ -40,7 +40,7 @@ export function ProfileStatusCard({
           </div>
           {!isProfileComplete && (
             <Button 
-              onClick={() => navigate('/profile/complete')}
+              onClick={() => navigate('/profile/complete?from=home')}
               size="sm"
             >
               Completar Perfil

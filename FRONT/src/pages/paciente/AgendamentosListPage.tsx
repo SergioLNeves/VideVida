@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAgendamento } from '@/hooks/useAgendamento'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, User, Plus } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useAgendamento } from '@/hooks/useAgendamento'
 import type { Agendamento } from '@/types/agendamento'
+import { ArrowLeftCircle, Calendar, Clock, Plus, User } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const statusColors = {
   agendado: 'bg-blue-100 text-blue-800',
@@ -25,16 +26,19 @@ const statusLabels = {
 
 export function AgendamentosListPage() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { agendamentos, medicos, tratamentos, isLoading } = useAgendamento()
   const [userAgendamentos, setUserAgendamentos] = useState<Agendamento[]>([])
 
   useEffect(() => {
-    // Filtrar agendamentos do usuário atual (substituir por ID real do usuário)
-    const filtered = agendamentos.filter(agendamento => 
-      agendamento.pacienteId === 'current_user'
-    )
-    setUserAgendamentos(filtered)
-  }, [agendamentos])
+    if (user?.email) {
+      // Filtrar agendamentos do usuário atual usando o email como ID único
+      const filtered = agendamentos.filter(agendamento => 
+        agendamento.pacienteId === user.email || agendamento.pacienteId === 'current_user'
+      )
+      setUserAgendamentos(filtered)
+    }
+  }, [agendamentos, user])
 
   const getMedicoById = (id: string) => {
     return medicos.find(medico => medico.id === id)
@@ -73,10 +77,16 @@ export function AgendamentosListPage() {
               Visualize e gerencie suas consultas agendadas.
             </p>
           </div>
+          <section className='flex items-center gap-2'>
+     <Button onClick={() => navigate(-1)}>
+         <ArrowLeftCircle/> Voltar
+        </Button>
           <Button onClick={() => navigate('/agendamento')}>
             <Plus className="w-4 h-4 mr-2" />
             Nova Consulta
           </Button>
+          </section>
+       
         </div>
 
         {userAgendamentos.length === 0 ? (
@@ -201,6 +211,7 @@ export function AgendamentosListPage() {
             })}
           </div>
         )}
+
       </div>
     </div>
   )

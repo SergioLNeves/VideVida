@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAgendamento } from '@/hooks/useAgendamento'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import type { AgendamentoRequest, Medico, Tratamento } from '@/types/agendamento'
-import { Clock, Stethoscope, User } from 'lucide-react'
+import { ArrowLeftCircle, Clock, Stethoscope, User } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -47,7 +47,7 @@ export function AgendamentoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/profile/complete')} className="w-full">
+            <Button onClick={() => navigate('/profile/complete?from=agendamento')} className="w-full">
               Completar Perfil
             </Button>
           </CardContent>
@@ -142,12 +142,18 @@ export function AgendamentoPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-8">
+        <section className='flex justify-between items-center mb-8'>
+ <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Agendar Consulta</h1>
           <p className="text-gray-600 mt-2">
             Olá, {profile?.nome}! Escolha como deseja buscar sua consulta.
           </p>
         </div>
+        <Button onClick={() => navigate(-1)} className="mb-6">
+          <ArrowLeftCircle/> Voltar
+        </Button>
+        </section>
+       
 
         {/* Modo de Busca */}
         <Card className="mb-6">

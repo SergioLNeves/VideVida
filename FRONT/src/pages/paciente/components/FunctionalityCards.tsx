@@ -1,6 +1,8 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useAuth } from '@/contexts/AuthContext'
+import { useAgendamento } from '@/hooks/useAgendamento'
 import { Calendar, FileText, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,12 +12,19 @@ interface FunctionalityCardsProps {
 
 export function FunctionalityCards({ isProfileComplete }: FunctionalityCardsProps) {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const { agendamentos } = useAgendamento()
+
+  // Filtrar consultas do paciente atual
+  const userConsultas = agendamentos.filter(agendamento => 
+    agendamento.pacienteId === user?.email || agendamento.pacienteId === 'current_user'
+  ).slice(0, 3) // Mostrar apenas as 3 próximas
 
   const handleAgendarConsulta = () => {
     if (isProfileComplete) {
       navigate('/agendamento')
     } else {
-      navigate('/profile/complete')
+      navigate('/profile/complete?from=agendamento')
     }
   }
 
@@ -26,7 +35,7 @@ export function FunctionalityCards({ isProfileComplete }: FunctionalityCardsProp
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Consultas
+            Minhas Consultas
             {!isProfileComplete && (
               <Badge variant="secondary" className="ml-2">
                 Requer perfil completo
@@ -34,10 +43,25 @@ export function FunctionalityCards({ isProfileComplete }: FunctionalityCardsProp
             )}
           </CardTitle>
           <CardDescription>
-            Agende e gerencie suas consultas
+            {isProfileComplete && userConsultas.length > 0 
+              ? `Você tem ${userConsultas.length} consulta(s)` 
+              : 'Agende e gerencie suas consultas'
+            }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
+          {isProfileComplete && userConsultas.length > 0 && (
+            <div className="mb-3 space-y-1">
+              {userConsultas.map((consulta) => (
+                <div key={consulta.id} className="text-sm flex justify-between items-center p-2 bg-gray-50 rounded">
+                  <span>{new Date(consulta.data).toLocaleDateString('pt-BR')}</span>
+                  <Badge variant={consulta.status === 'agendado' ? 'default' : 'secondary'}>
+                    {consulta.status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
           <Button 
             className="w-full" 
             onClick={handleAgendarConsulta}
@@ -89,7 +113,7 @@ export function FunctionalityCards({ isProfileComplete }: FunctionalityCardsProp
           <Button 
             className="w-full" 
             variant="outline"
-            onClick={() => navigate('/profile/complete')}
+            onClick={() => navigate('/profile/complete?from=home')}
           >
             {isProfileComplete ? 'Editar Perfil' : 'Completar Perfil'}
           </Button>

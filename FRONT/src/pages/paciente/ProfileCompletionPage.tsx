@@ -7,9 +7,9 @@ import { useUserProfile } from '@/hooks/useUserProfile'
 import type { UserProfile } from '@/types/profile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -18,6 +18,7 @@ const profileSchema = z.object({
   telefone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
   cpf: z.string().min(11, 'CPF deve ter 11 dígitos'),
   dataNascimento: z.string().min(1, 'Data de nascimento é obrigatória'),
+  convenio: z.string().optional(),
   endereco: z.object({
     cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
     logradouro: z.string().min(1, 'Logradouro é obrigatório'),
@@ -33,8 +34,12 @@ type ProfileFormData = z.infer<typeof profileSchema>
 
 export function ProfileCompletionPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { profile, updateProfile, getProfileValidation, isLoading } = useUserProfile()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Detectar de onde o usuário veio
+  const from = searchParams.get('from') || 'home' // padrão é 'home'
 
   const validation = getProfileValidation()
 
@@ -45,6 +50,7 @@ export function ProfileCompletionPage() {
       telefone: profile?.telefone || '',
       cpf: profile?.cpf || '',
       dataNascimento: profile?.dataNascimento || '',
+      convenio: profile?.convenio || '',
       endereco: {
         cep: profile?.endereco?.cep || '',
         logradouro: profile?.endereco?.logradouro || '',
@@ -57,6 +63,27 @@ export function ProfileCompletionPage() {
     }
   })
 
+  useEffect(() => {
+    if (profile) {
+      form.reset({
+        nome: profile.nome || '',
+        telefone: profile.telefone || '',
+        cpf: profile.cpf || '',
+        dataNascimento: profile.dataNascimento || '',
+        convenio: profile.convenio || '',
+        endereco: {
+          cep: profile.endereco?.cep || '',
+          logradouro: profile.endereco?.logradouro || '',
+          numero: profile.endereco?.numero || '',
+          complemento: profile.endereco?.complemento || '',
+          bairro: profile.endereco?.bairro || '',
+          cidade: profile.endereco?.cidade || '',
+          estado: profile.endereco?.estado || ''
+        }
+      })
+    }
+  }, [profile, form])
+
   const onSubmit = async (data: ProfileFormData) => {
     try {
       setIsSubmitting(true)
@@ -66,15 +93,26 @@ export function ProfileCompletionPage() {
         telefone: data.telefone,
         cpf: data.cpf,
         dataNascimento: data.dataNascimento,
+        convenio: data.convenio,
         endereco: data.endereco
       }
 
       await updateProfile(updatedProfile)
       
-      toast.success('Perfil atualizado com sucesso!')
+      const currentValidation = getProfileValidation()
       
-      // Redirecionar para o sistema de agendamento
-      navigate('/agendamento')
+      if (currentValidation?.isValid) {
+        toast.success('Perfil completado com sucesso!')
+        // Redirecionar baseado na origem
+        if (from === 'agendamento') {
+          navigate('/agendamento')
+        } else {
+          navigate('/paciente') // volta para home do paciente
+        }
+      } else {
+        toast.success('Progresso salvo! Continue preenchendo os campos obrigatórios.')
+      }
+      
     } catch (error) {
       toast.error('Erro ao atualizar perfil. Tente novamente.')
       console.error('Erro ao atualizar perfil:', error)
@@ -102,12 +140,30 @@ export function ProfileCompletionPage() {
             <CardTitle>Complete seu Perfil</CardTitle>
             <CardDescription>
               Para agendar consultas, precisamos de algumas informações adicionais.
-              {validation && (
-                <span className="block mt-2 text-sm">
-                  Progresso: {validation.completionPercentage}% completo
-                </span>
-              )}
             </CardDescription>
+            {validation && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    Progresso do perfil
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {validation.completionPercentage}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${validation.completionPercentage}%` }}
+                  ></div>
+                </div>
+                {validation.missingFields.length > 0 && (
+                  <p className="text-sm text-amber-600 mt-2">
+                    {validation.missingFields.length} campo(s) obrigatório(s) pendente(s)
+                  </p>
+                )}
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -177,6 +233,20 @@ export function ProfileCompletionPage() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="convenio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Convênio (opcional)</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Nome do convênio" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                    />
                 </div>
 
                 {/* Endereço */}
@@ -302,7 +372,8 @@ export function ProfileCompletionPage() {
                     disabled={isSubmitting}
                     className="flex-1"
                   >
-                    {isSubmitting ? 'Salvando...' : 'Salvar e Continuar'}
+                    {isSubmitting ? 'Salvando...' : 
+                     validation?.isValid ? 'Finalizar Perfil' : 'Salvar Progresso'}
                   </Button>
                 </div>
               </form>

@@ -1,6 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import type { AuthState, User } from '@/types/auth'
 import type { ReactNode } from 'react'
-import type { User, AuthState } from '@/types/auth'
+import { createContext, useContext, useEffect, useState } from 'react'
+
+
+const AUTH_SESSION_KEY = 'videvida_auth_state'
 
 interface AuthContextType extends AuthState {
     login: (user: User) => void
@@ -22,8 +25,6 @@ interface AuthProviderProps {
     children: ReactNode
 }
 
-// Chave para persistir o estado de autenticação na sessão
-const AUTH_SESSION_KEY = 'videvida_auth_state'
 
 // Função para salvar estado de auth no sessionStorage
 const saveAuthState = (state: AuthState): void => {
